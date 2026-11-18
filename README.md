@@ -40,4 +40,3 @@ El `.gitignore` excluye `*.p12`, `*.crt`, `*.key`, `.env`, `.env.*`, `.local/`, 
 ## Alcance actual
 
 El proyecto corresponde al ejercicio 3. El ejercicio 4 (incluido mTLS) y el ejercicio 5 estan pendientes; no se presentan como implementados en este repositorio.
-
