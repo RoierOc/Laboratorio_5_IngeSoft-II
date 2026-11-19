@@ -11,6 +11,14 @@ Proyecto generado con Spring Initializr (Maven, Java 17, Spring Web) y ajustado 
 - Truststore local especifico para confiar en el certificado del laboratorio.
 - Servicio enlazado a 127.0.0.1 para la practica local.
 
+## Ejecutar la demostracion en Linux / macOS / Git Bash
+
+```bash
+bash scripts/demostrar-ejercicio3.sh
+```
+
+Genera certificados y contrasenas aleatorias solo en el entorno del proceso (se regeneran en cada ejecucion), compila, arranca la API, ejecuta los casos (1), (2), (3) y los dos del cliente Java, y guarda la salida en ../resultados/ejercicio3-https.txt con la clave enmascarada. El cliente Java con truststore se ejecuta con las propiedades -D del enunciado.
+
 ## Ejecutar la demostracion en Windows
 
 Requisitos: JDK 17+ y curl en PATH. Maven se incluye como herramienta local o se descarga mediante mvnw.cmd. No requiere instalacion global.
@@ -30,6 +38,8 @@ Resultados fuera del proyecto, en la carpeta hermana ../resultados. Los errores 
 ```
 
 Genera KEYSTORE_PASSWORD y TRUSTSTORE_PASSWORD aleatorias y las define solo en el proceso actual. Usa keytool -storepass:env para no imprimirlas ni incluirlas en argumentos. Las claves se conservan cifradas con DPAPI en .local/credenciales.xml, vinculadas al usuario Windows; otro integrante debe generar las suyas desde una copia limpia. No copiar .local, los keystores ni target al compartir.
+
+En este ejercicio TRUSTSTORE_PASSWORD protege el truststore del cliente Java (confianza.p12). En el ejercicio 4 la misma variable corresponde al truststore del servidor; ver la tabla del README de la raiz.
 
 Almacen del servidor: src/main/resources/keystore.p12. Certificado publico: .local/seii.crt. Truststore del cliente: .local/confianza.p12. application.properties obtiene la clave del servidor de KEYSTORE_PASSWORD. ClienteSalud obtiene la clave de TRUSTSTORE_PASSWORD y configura javax.net.ssl.trustStore, trustStoreType y trustStorePassword antes de construir HttpClient. Es equivalente a las propiedades -D del enunciado sin escribir la clave en la linea de comandos.
 

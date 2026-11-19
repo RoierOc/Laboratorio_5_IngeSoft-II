@@ -24,6 +24,27 @@ Para arrancar a mano: defina `KEYSTORE_PASSWORD` y `TRUSTSTORE_PASSWORD` con las
 
 Ningun `.p12`, `.crt`, `.key` ni `.env` se versiona (ver `.gitignore`). No suba `target/`: el JAR contiene keystore y truststore.
 
-## Estado de verificacion
+## Variables de entorno
 
-El codigo Java y el script **no fueron compilados ni ejecutados** por quien los redacto (el entorno no tenia acceso a Maven Central). Ejecute el script y revise `ejercicio4-mtls.txt` antes de entregar.
+| Variable | Almacen |
+|---|---|
+| `KEYSTORE_PASSWORD` | `src/main/resources/keystore.p12`: identidad del servidor |
+| `TRUSTSTORE_PASSWORD` | `src/main/resources/truststore.p12`: truststore **del servidor** (clientes autorizados) |
+| `CLIENTE_PASSWORD` | `.local/cliente-pagos.p12`: identidad del cliente |
+| `CONFIANZA_PASSWORD` | `.local/confianza.p12`: truststore del cliente Java |
+
+A diferencia del ejercicio 3, aqui `TRUSTSTORE_PASSWORD` corresponde al truststore del servidor, como en el `application.properties` del enunciado. Los comandos manuales estan en el README de la raiz.
+
+## Resultados esperados
+
+Verificado con `scripts/demostrar-ejercicio4.sh` (JDK 17+, OpenSSL 3):
+
+| Caso | Resultado |
+|---|---|
+| A. curl sin certificado de cliente | exit 56, `tlsv13 alert certificate required` |
+| B. curl con `cliente-pagos.p12` | `200`, `{"estado":"ok","cliente":"CN=servicio-pagos"}` y HSTS |
+| C. curl con certificado no autorizado | exit 56, `alert certificate unknown` |
+| D. Java sin certificado de cliente | `Received fatal alert: certificate_required` |
+| E. Java con certificado de cliente | `200` y HSTS |
+
+En TLS 1.3 el rechazo del caso A ocurre despues del `Finished` del cliente: el servidor valida el `Certificate` (vacio) y envia la alerta `certificate_required`, que el cliente recibe en su primera lectura. Por eso curl reporta un error de `SSL_read` y no de conexion.
