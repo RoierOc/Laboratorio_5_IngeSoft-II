@@ -1,6 +1,6 @@
 # API HTTPS del Laboratorio 5
 
-Proyecto generado con Spring Initializr (Maven, Java 17, Spring Web) y ajustado a Spring Boot 3.5.16, disponible en Maven Central. Initializr ofrecio 4.1.2.RELEASE, pero ese identificador no estaba disponible en Central al preparar el proyecto. Se conserva el ZIP original en 00_Herramientas como procedencia.
+Proyecto generado con Spring Initializr (Maven, Java 17, Spring Web) sobre Spring Boot 3.5.16.
 
 ## Contenido
 

@@ -4,7 +4,7 @@ Es el proyecto del ejercicio 3 con **TLS mutuo**: el servidor exige certificado 
 
 - `server.ssl.client-auth=need` + `server.ssl.trust-store=classpath:truststore.p12`.
 - El truststore del servidor contiene solo el certificado publico de `CN=servicio-pagos`.
-- `GET /api/v1/salud` responde `{"estado":"ok","cliente":"CN=servicio-pagos"}` leyendo `jakarta.servlet.request.X509Certificate`.
+- `GET /api/v1/salud` responde `{"estado":"ok","cliente":"servicio-pagos"}` leyendo `jakarta.servlet.request.X509Certificate` y extrayendo el CN del sujeto.
 - `ClienteSalud --confiar --cliente` es el cliente Java con truststore y keystore de cliente (sin desactivar validacion).
 
 ## Ejecutar (Windows)
@@ -42,7 +42,7 @@ Verificado con `scripts/demostrar-ejercicio4.sh` (JDK 17+, OpenSSL 3):
 | Caso | Resultado |
 |---|---|
 | A. curl sin certificado de cliente | exit 56, `tlsv13 alert certificate required` |
-| B. curl con `cliente-pagos.p12` | `200`, `{"estado":"ok","cliente":"CN=servicio-pagos"}` y HSTS |
+| B. curl con `cliente-pagos.p12` | `200`, `{"estado":"ok","cliente":"servicio-pagos"}` y HSTS |
 | C. curl con certificado no autorizado | exit 56, `alert certificate unknown` |
 | D. Java sin certificado de cliente | `Received fatal alert: certificate_required` |
 | E. Java con certificado de cliente | `200` y HSTS |

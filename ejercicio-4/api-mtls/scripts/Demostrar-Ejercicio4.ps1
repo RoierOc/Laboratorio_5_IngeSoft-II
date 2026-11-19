@@ -13,13 +13,21 @@ try {
     }
     $ks = 'src\main\resources\keystore.p12'; $ts = 'src\main\resources\truststore.p12'
     Remove-Item -ErrorAction SilentlyContinue $ks, $ts, "$local\*.p12", "$local\*.crt"
+    function Comprobar([string]$paso) { if ($LASTEXITCODE -ne 0) { throw "Fallo keytool: $paso" } }
     keytool -genkeypair -alias seii -keyalg RSA -keysize 2048 -validity 30 -storetype PKCS12 -keystore $ks -storepass:env KEYSTORE_PASSWORD -dname 'CN=localhost' -ext 'SAN=dns:localhost,ip:127.0.0.1' -ext 'EKU=serverAuth'
+    Comprobar 'certificado del servidor'
     keytool -exportcert -alias seii -keystore $ks -storepass:env KEYSTORE_PASSWORD -rfc -file "$local\seii.crt"
+    Comprobar 'exportar seii.crt'
     keytool -genkeypair -alias pagos -keyalg RSA -keysize 2048 -validity 30 -storetype PKCS12 -keystore "$local\cliente-pagos.p12" -storepass:env CLIENTE_PASSWORD -dname 'CN=servicio-pagos' -ext 'EKU=clientAuth'
+    Comprobar 'certificado del cliente'
     keytool -exportcert -alias pagos -keystore "$local\cliente-pagos.p12" -storepass:env CLIENTE_PASSWORD -rfc -file "$local\cliente-pagos.crt"
+    Comprobar 'exportar cliente-pagos.crt'
     keytool -importcert -alias pagos -file "$local\cliente-pagos.crt" -noprompt -storetype PKCS12 -keystore $ts -storepass:env TRUSTSTORE_PASSWORD
+    Comprobar 'truststore del servidor'
     keytool -importcert -alias seii -file "$local\seii.crt" -noprompt -storetype PKCS12 -keystore "$local\confianza.p12" -storepass:env CONFIANZA_PASSWORD
+    Comprobar 'truststore del cliente'
     keytool -genkeypair -alias intruso -keyalg RSA -keysize 2048 -validity 1 -storetype PKCS12 -keystore "$local\intruso.p12" -storepass:env CLIENTE_PASSWORD -dname 'CN=intruso'
+    Comprobar 'certificado intruso'
 
     & .\mvnw.cmd '-Dmaven.test.skip=true' package --batch-mode
     if ($LASTEXITCODE -ne 0) { throw 'Fallo la compilacion Maven' }

@@ -17,8 +17,8 @@ try {
     } finally { $comprobacion.Dispose() }
     & (Join-Path $PSScriptRoot 'Preparar-Certificados.ps1')
     Write-Host 'Compilando Spring Boot. La primera vez descarga dependencias...'
-    $mavenLocal = Join-Path (Split-Path (Split-Path $proyecto -Parent) -Parent) '00_Herramientas\apache-maven-3.10.1\bin\mvn.cmd'
-    $maven = if (Test-Path -LiteralPath $mavenLocal) { $mavenLocal } else { Join-Path $proyecto 'mvnw.cmd' }
+    $mvnGlobal = Get-Command mvn.cmd -ErrorAction SilentlyContinue
+    $maven = if ($mvnGlobal) { $mvnGlobal.Source } else { Join-Path $proyecto 'mvnw.cmd' }
     $env:MAVEN_USER_HOME = Join-Path $proyecto '.local\maven'
     & $maven '-Dmaven.repo.local=.local/m2' '-Dmaven.test.skip=true' package --batch-mode
     if ($LASTEXITCODE -ne 0) { throw 'Fallo la compilacion Maven' }
