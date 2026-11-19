@@ -1,0 +1,18 @@
+# Certificados, llaves y secretos
+*.p12
+*.crt
+*.key
+.env
+.env.*
+
+# Material local y archivos generados
+**/.local/
+**/target/
+**/resultados/
+*.log
+**/.mvn/wrapper/maven-wrapper.jar
+
+# IDEs
+.idea/
+*.iml
+.vscode/
